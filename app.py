@@ -1,6 +1,6 @@
-from flask import Flask
+from flask import Flask, g, session
 from flask_sqlalchemy import SQLAlchemy
-from app.user_account.interfaces.routes.user_routes import user_bp
+from app.product_management.interfaces.routes.product_routes import product_bp
 import logging
 from datetime import timedelta
 
@@ -18,7 +18,15 @@ logger = logging.getLogger(__name__)
 db = SQLAlchemy(app)
 
 # Register blueprints
-app.register_blueprint(user_bp)
+app.register_blueprint(product_bp)
+
+@app.before_request
+def load_user():
+    user_id = session.get('user_id')
+    if user_id:
+        g.user = User.query.get(user_id)
+    else:
+        g.user = None
 
 if __name__ == '__main__':
     app.run(debug=True)
