@@ -1,6 +1,6 @@
 from flask import Flask, g, session
 from flask_sqlalchemy import SQLAlchemy
-from app.product_management.interfaces.routes.category_routes import category_bp
+from app.shopping_cart.interfaces.routes.cart_routes import cart_bp
 import logging
 from datetime import timedelta
 
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 db = SQLAlchemy(app)
 
 # Register blueprints
-app.register_blueprint(category_bp)
+app.register_blueprint(cart_bp)
 
 @app.before_request
 def load_user():
