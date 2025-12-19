@@ -10,5 +10,5 @@ class TestAuthenticationService(unittest.TestCase):
         result = AuthenticationService.authenticate('username', 'wrongpassword')
         self.assertFalse(result)
 
-if __name__ == '__main__':
+if __name__':
     unittest.main()
