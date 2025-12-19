@@ -1,1 +1,0 @@
-const User = require('../models/user');const findByEmail = async (email) => {  return await User.findOne({ email });};const create = async (userData) => {  const user = new User(userData);  return await user.save();};module.exports = {  findByEmail,  create};
