@@ -4,6 +4,7 @@ from flask import Flask
 from backend.config import configure_app
 from backend.controllers.auth import auth_blueprint
 from backend.controllers.products import products_blueprint
+from backend.controllers.cart import cart_blueprint
 from backend.models import db
 from backend.repositories import init_repositories
 from backend.services import init_services
@@ -17,6 +18,7 @@ def create_app(config_name: str) -> Flask:
     init_services(app)
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
     app.register_blueprint(products_blueprint, url_prefix='/products')
+    app.register_blueprint(cart_blueprint, url_prefix='/cart')
     return app
 
 
