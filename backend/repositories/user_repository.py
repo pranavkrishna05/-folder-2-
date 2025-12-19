@@ -1,13 +1,11 @@
-from models.user import User
-
+# user_repository.py
+from backend.models.user import User
+from backend.models import db
 
 class UserRepository:
-    def __init__(self):
-        self.users = {}
+    def get_by_email(self, email):
+        return User.query.filter_by(email=email).first()
 
-    def add_user(self, username, password):
-        user = User(username, password)
-        self.users[username] = user
-
-    def get_user(self, username):
-        return self.users.get(username)
+    def save(self, user):
+        db.session.add(user)
+        db.session.commit()
