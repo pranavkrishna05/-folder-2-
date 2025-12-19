@@ -1,4 +1,3 @@
-
 from repositories.user import UserRepository
 
 class AuthenticationService:
