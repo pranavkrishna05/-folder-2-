@@ -52,3 +52,14 @@ def modify_quantity_in_cart():
         return jsonify({"message": "Product quantity successfully updated"}), 200
     except ValueError as e:
         return jsonify({"message": str(e)}), 400
+
+@shopping_cart_blueprint.route('/get', methods=['GET'])
+def get_cart():
+    user_id = request.args.get('user_id')
+    
+    try:
+        shopping_cart = shopping_cart_service.get_cart(user_id)
+        cart_items = [{"product_id": item.product_id, "quantity": item.quantity} for item in shopping_cart.items]
+        return jsonify({"cart_id": shopping_cart.id, "items": cart_items}), 200
+    except ValueError as e:
+        return jsonify({"message": str(e)}), 400
