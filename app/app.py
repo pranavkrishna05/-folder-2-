@@ -8,6 +8,7 @@ from app.routes.product_routes import register_product_routes
 from app.routes.update_product_routes import register_update_product_routes
 from app.routes.delete_product_routes import register_delete_product_routes
 from app.routes.search_product_routes import register_search_product_routes
+from app.routes.category_routes import register_category_routes
 from app import db
 
 def create_app(config_name: str) -> Flask:
@@ -22,6 +23,7 @@ def create_app(config_name: str) -> Flask:
     register_update_product_routes(app)
     register_delete_product_routes(app)
     register_search_product_routes(app)
+    register_category_routes(app)
     return app
 
 if __name__ == '__main__':
