@@ -4,6 +4,7 @@ from app.routes.user_routes import register_routes
 from app.routes.auth_routes import register_auth_routes
 from app.routes.password_reset_routes import register_password_reset_routes
 from app.routes.profile_routes import register_profile_routes
+from app.routes.product_routes import register_product_routes
 from app import db
 
 def create_app(config_name: str) -> Flask:
@@ -14,6 +15,7 @@ def create_app(config_name: str) -> Flask:
     register_auth_routes(app)
     register_password_reset_routes(app)
     register_profile_routes(app)
+    register_product_routes(app)
     return app
 
 if __name__ == '__main__':
