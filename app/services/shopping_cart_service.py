@@ -38,3 +38,15 @@ class ShoppingCartService:
             self.shopping_cart_repository.save_item(cart_item)
         
         return shopping_cart
+
+    def remove_product(self, user_id: Optional[int], product_id: int) -> ShoppingCart:
+        shopping_cart = self.shopping_cart_repository.find_by_user_id(user_id)
+        if not shopping_cart:
+            raise ValueError("Shopping cart not found")
+        
+        cart_item = next((item for item in shopping_cart.items if item.product_id == product_id), None)
+        if not cart_item:
+            raise ValueError("Product not found in shopping cart")
+        
+        self.shopping_cart_repository.delete_item(cart_item)
+        return shopping_cart
