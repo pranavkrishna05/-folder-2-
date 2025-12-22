@@ -20,16 +20,8 @@ class ShoppingCartService:
         if not product:
             raise ValueError("Product not found")
 
-        if user_id:
-            shopping_cart = self.shopping_cart_repository.find_by_user_id(user_id)
-        else:
-            shopping_cart = ShoppingCart()
-            self.shopping_cart_repository.save(shopping_cart)
-        
-        if not shopping_cart:
-            shopping_cart = ShoppingCart(user_id=user_id)
-            self.shopping_cart_repository.save(shopping_cart)
-        
+        shopping_cart = self._get_or_create_cart(user_id)
+
         cart_item = next((item for item in shopping_cart.items if item.product_id == product_id), None)
         if cart_item:
             cart_item.quantity += quantity
@@ -38,7 +30,7 @@ class ShoppingCartService:
             self.shopping_cart_repository.save_item(cart_item)
         
         return shopping_cart
-
+    
     def remove_product(self, user_id: Optional[int], product_id: int) -> ShoppingCart:
         shopping_cart = self.shopping_cart_repository.find_by_user_id(user_id)
         if not shopping_cart:
@@ -49,4 +41,27 @@ class ShoppingCartService:
             raise ValueError("Product not found in shopping cart")
         
         self.shopping_cart_repository.delete_item(cart_item)
+        return shopping_cart
+    
+    def modify_quantity(self, user_id: Optional[int], product_id: int, quantity: int) -> ShoppingCart:
+        if quantity <= 0:
+            raise ValueError("Quantity must be a positive integer")
+        
+        shopping_cart = self.shopping_cart_repository.find_by_user_id(user_id)
+        if not shopping_cart:
+            raise ValueError("Shopping cart not found")
+        
+        cart_item = next((item for item in shopping_cart.items if item.product_id == product_id), None)
+        if not cart_item:
+            raise ValueError("Product not found in shopping cart")
+        
+        cart_item.quantity = quantity
+        self.shopping_cart_repository.save_item(cart_item)
+        return shopping_cart
+    
+    def _get_or_create_cart(self, user_id: Optional[int]) -> ShoppingCart:
+        shopping_cart = self.shopping_cart_repository.find_by_user_id(user_id)
+        if not shopping_cart:
+            shopping_cart = ShoppingCart(user_id=user_id)
+            self.shopping_cart_repository.save(shopping_cart)
         return shopping_cart
