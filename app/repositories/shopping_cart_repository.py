@@ -20,3 +20,7 @@ class ShoppingCartRepository:
     def save_item(self, shopping_cart_item: ShoppingCartItem) -> None:
         db.session.add(shopping_cart_item)
         db.session.commit()
+    
+    def delete_item(self, shopping_cart_item: ShoppingCartItem) -> None:
+        db.session.delete(shopping_cart_item)
+        db.session.commit()
