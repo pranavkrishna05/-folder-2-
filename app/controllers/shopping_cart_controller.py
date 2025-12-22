@@ -21,3 +21,18 @@ def add_to_cart():
         return jsonify({"cart_id": shopping_cart.id, "product_id": product_id, "quantity": quantity}), 201
     except ValueError as e:
         return jsonify({"message": str(e)}), 400
+
+@shopping_cart_blueprint.route('/remove', methods=['POST'])
+def remove_from_cart():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    product_id = data.get('product_id')
+    
+    if not product_id:
+        return jsonify({"message": "Product ID is required"}), 400
+    
+    try:
+        shopping_cart = shopping_cart_service.remove_product(user_id, product_id)
+        return jsonify({"message": "Product successfully removed from cart"}), 200
+    except ValueError as e:
+        return jsonify({"message": str(e)}), 400
