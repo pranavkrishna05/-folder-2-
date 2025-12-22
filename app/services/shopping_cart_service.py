@@ -59,6 +59,13 @@ class ShoppingCartService:
         self.shopping_cart_repository.save_item(cart_item)
         return shopping_cart
     
+    def get_cart(self, user_id: Optional[int]) -> ShoppingCart:
+        shopping_cart = self.shopping_cart_repository.find_by_user_id(user_id)
+        if not shopping_cart:
+            shopping_cart = ShoppingCart(user_id=user_id)
+            self.shopping_cart_repository.save(shopping_cart)
+        return shopping_cart
+    
     def _get_or_create_cart(self, user_id: Optional[int]) -> ShoppingCart:
         shopping_cart = self.shopping_cart_repository.find_by_user_id(user_id)
         if not shopping_cart:
