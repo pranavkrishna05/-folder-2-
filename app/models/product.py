@@ -1,5 +1,5 @@
 """
-Product model definition with support for search functionality.
+Product model definition.
 """
 
 from flask_sqlalchemy import SQLAlchemy
@@ -14,17 +14,17 @@ class Product(db.Model):
     __tablename__ = "products"
 
     id: int = Column(Integer, primary_key=True)
-    name: str = Column(String(100), nullable=False)
+    name: str = Column(String(100), unique=True, nullable=False)
     price: float = Column(Float, nullable=False)
     description: str = Column(String(255), nullable=False)
-    category_name: str = Column(String(50), nullable=False)
 
-    def to_dict(self) -> dict:
-        """Convert Product object to dictionary."""
-        return {
-            "id": self.id,
-            "name": self.name,
-            "price": self.price,
-            "description": self.description,
-            "category_name": self.category_name,
-        }
+    def update_product(self, price: float = None, description: str = None) -> None:
+        """Update product details."""
+        if price is not None:
+            if not isinstance(price, (int, float)) or price <= 0:
+                raise ValueError("Price must be a positive numeric value")
+            self.price = price
+        if description is not None:
+            if description.strip() == "":
+                raise ValueError("Description cannot be removed")
+            self.description = description
