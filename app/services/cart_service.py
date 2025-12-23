@@ -1,23 +1,31 @@
 """
-Shopping cart service: application layer for business logic related to quantity modification.
+Shopping cart service: application layer for persistent cart state management.
 """
 
 from app.repositories.shopping_cart_repository import ShoppingCartRepository
+from app.repositories.product_repository import ProductRepository
 
 
 class CartService:
     """Service layer to handle shopping cart logic."""
 
     @staticmethod
-    def modify_item_quantity(cart_id: int, item_id: int, new_quantity: int) -> dict:
-        """Modify the quantity of an item in the cart and update the total price."""
-        cart = ShoppingCartRepository.get_cart_by_id(cart_id)
+    def get_or_create_user_cart(user_id: int) -> dict:
+        """Retrieve or create a persistent shopping cart for a user."""
+        if not user_id:
+            raise ValueError("User ID is required for retrieving or creating a cart")
+
+        cart = ShoppingCartRepository.get_cart_by_user_id(user_id)
         if not cart:
-            raise ValueError("Shopping cart not found")
-
-        items = ShoppingCartRepository.get_items_in_cart(cart_id=cart_id)
-        if not any(item.id == item_id for item in items):
-            raise ValueError("Item not found in cart")
-
-        ShoppingCartRepository.modify_item_quantity(cart_id=cart_id, item_id=item_id, new_quantity=new_quantity)
+            cart = ShoppingCartRepository.create_cart_for_user(user_id)
         return cart.to_dict()
+
+    @staticmethod
+    def add_to_cart(cart_id: int, product_id: int, quantity: int = 1) -> dict:
+        """Add an item to the user's shopping cart."""
+        product = ProductRepository.get_product_by_id(product_id)
+        if not product:
+            raise ValueError("Product not found")
+
+        item = ShoppingCartRepository.add_item_to_cart(cart_id=cart_id, product_id=product_id, quantity=quantity)
+        return item.to_dict()
