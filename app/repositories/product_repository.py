@@ -1,22 +1,30 @@
 """
-Repository layer for product data interactions, ensuring category association.
+Repository layer for product data interactions, including search functionality.
 """
 
 from app.models.product import Product, db
+from sqlalchemy.orm import Query
 
 
 class ProductRepository:
     """Provides Product model-related database functionality."""
 
     @staticmethod
-    def add_product(name: str, price: float, description: str, category_id: int) -> Product:
-        """Add a new product and ensure it is linked to a category."""
-        product = Product(name=name, price=price, description=description, category_id=category_id)
-        db.session.add(product)
-        db.session.commit()
-        return product
-
-    @staticmethod
-    def get_product_by_id(product_id: int) -> Product | None:
-        """Retrieve product by its ID."""
-        return Product.query.get(product_id)
+    def search_products(
+        keyword: str, category: str = None, page: int = 1, per_page: int = 10
+    ) -> dict:
+        """Search products based on keyword and category."""
+        query: Query = Product.query.filter(
+            Product.name.ilike(f"%{keyword}%") | Product.description.ilike(f"%{keyword}%")
+        )
+        
+        if category:
+            query = query.filter(Product.category_name.ilike(f"%{category}%"))
+        
+        paginated_results = query.paginate(page=page, per_page=per_page, error_out=False)
+        return {
+            "total": paginated_results.total,
+            "pages": paginated_results.pages,
+            "current_page": paginated_results.page,
+            "products": [product.to_dict() for product in paginated_results.items],
+        }
