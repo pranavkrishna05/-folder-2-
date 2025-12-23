@@ -1,10 +1,9 @@
 """
-Product model definition linked with categories.
+Product model definition with support for search functionality.
 """
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Float
 
 db = SQLAlchemy()
 
@@ -15,12 +14,10 @@ class Product(db.Model):
     __tablename__ = "products"
 
     id: int = Column(Integer, primary_key=True)
-    name: str = Column(String(100), unique=True, nullable=False)
+    name: str = Column(String(100), nullable=False)
     price: float = Column(Float, nullable=False)
     description: str = Column(String(255), nullable=False)
-    category_id: int = Column(Integer, ForeignKey("categories.id"), nullable=False)
-
-    category: "Category" = relationship("Category", backref="products")
+    category_name: str = Column(String(50), nullable=False)
 
     def to_dict(self) -> dict:
         """Convert Product object to dictionary."""
@@ -29,5 +26,5 @@ class Product(db.Model):
             "name": self.name,
             "price": self.price,
             "description": self.description,
-            "category": self.category.to_dict() if self.category else None,
+            "category_name": self.category_name,
         }
