@@ -1,5 +1,5 @@
 """
-Shopping cart-related API routes.
+Shopping cart-related API routes, including item removal.
 """
 
 from flask import Blueprint
