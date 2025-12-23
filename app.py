@@ -4,9 +4,9 @@ Application entry point for the Flask application.
 
 from flask import Flask
 from app.config.app_config import DevelopmentConfig
-from app.routes.cart_routes import cart_routes
-from app.models.shopping_cart import db
-from app.models.product import Product
+from app.routes.category_routes import category_routes
+from app.models.product import db
+from app.models.category import Category
 
 
 def create_app() -> Flask:
@@ -17,8 +17,8 @@ def create_app() -> Flask:
     # Initialize SQLAlchemy
     db.init_app(app)
 
-    # Register shopping cart routes
-    app.register_blueprint(cart_routes)
+    # Register category-related routes
+    app.register_blueprint(category_routes)
 
     return app
 
