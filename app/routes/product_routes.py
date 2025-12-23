@@ -1,5 +1,5 @@
 """
-Product-related API routes.
+Product-related API routes, including the delete functionality.
 """
 
 from flask import Blueprint
