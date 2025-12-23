@@ -1,5 +1,5 @@
 """
-Repository layer for shopping cart data interactions.
+Repository layer for shopping cart data interactions, including item removal and total price update.
 """
 
 from app.models.shopping_cart import ShoppingCart, CartItem, db
@@ -14,31 +14,26 @@ class ShoppingCartRepository:
         return ShoppingCart.query.filter_by(user_id=user_id).first()
 
     @staticmethod
-    def create_cart(user_id: int = None) -> ShoppingCart:
-        """Create a new shopping cart."""
-        cart = ShoppingCart(user_id=user_id)
-        db.session.add(cart)
-        db.session.commit()
-        return cart
+    def get_cart_by_id(cart_id: int) -> ShoppingCart | None:
+        """Retrieve a shopping cart by its ID."""
+        return ShoppingCart.query.get(cart_id)
 
     @staticmethod
-    def add_item_to_cart(cart_id: int, product_id: int, quantity: int) -> CartItem:
-        """Add an item to the shopping cart."""
-        item = CartItem(product_id=product_id, quantity=quantity, shopping_cart_id=cart_id)
-        db.session.add(item)
-        db.session.commit()
-        return item
+    def remove_item_from_cart(cart_id: int, item_id: int) -> None:
+        """Remove an item from the shopping cart."""
+        cart = ShoppingCartRepository.get_cart_by_id(cart_id)
+        if not cart:
+            raise ValueError("Shopping cart not found")
+        
+        item = CartItem.query.get(item_id)
+        if not item:
+            raise ValueError("Item not found in cart")
+
+        db.session.delete(item)
+        cart.update_total_price()
 
     @staticmethod
     def get_items_in_cart(cart_id: int) -> list[CartItem]:
         """Retrieve all items in a shopping cart."""
         cart = ShoppingCart.query.get(cart_id)
         return cart.cart_items if cart else []
-
-    @staticmethod
-    def remove_item_from_cart(item_id: int) -> None:
-        """Remove an item from the shopping cart."""
-        item = CartItem.query.get(item_id)
-        if item:
-            db.session.delete(item)
-            db.session.commit()
