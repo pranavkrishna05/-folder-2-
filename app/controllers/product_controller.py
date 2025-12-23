@@ -1,5 +1,5 @@
 """
-Controller layer for product-related API endpoints.
+Controller layer for product management routes.
 """
 
 from flask import Blueprint, jsonify, request
@@ -8,15 +8,15 @@ from app.services.product_service import ProductService
 product_blueprint = Blueprint("product", __name__, url_prefix="/product")
 
 
-@product_blueprint.route("/delete/<int:product_id>", methods=["DELETE"])
-def delete_product(product_id: int):
-    """Endpoint for admins to delete products."""
-    confirmation = request.args.get("confirm")
-    if confirmation != "true":
-        return jsonify({"error": "Deletion requires confirmation"}), 400
+@product_blueprint.route("/update/<int:product_id>", methods=["PUT"])
+def update_product(product_id: int):
+    """Endpoint to update product details."""
+    data = request.get_json()
+    price = data.get("price")
+    description = data.get("description")
 
     try:
-        ProductService.delete_product(product_id=product_id)
-        return jsonify({"message": "Product deleted successfully"}), 200
+        updated_product = ProductService.update_product(product_id=product_id, price=price, description=description)
+        return jsonify(updated_product), 200
     except ValueError as e:
-        return jsonify({"error": str(e)}), 404
+        return jsonify({"error": str(e)}), 400
