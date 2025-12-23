@@ -1,5 +1,5 @@
 """
-ShoppingCart model definition with total price tracking functionality.
+ShoppingCart model definition with quantity adjustment and total price recalculation features.
 """
 
 from flask_sqlalchemy import SQLAlchemy
