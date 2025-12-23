@@ -1,5 +1,5 @@
 """
-Shopping cart-related API routes, including quantity modification.
+API routes for shopping cart management including persistence across user sessions.
 """
 
 from flask import Blueprint
