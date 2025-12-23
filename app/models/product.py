@@ -1,9 +1,10 @@
 """
-Product model definition with support for soft deletion.
+Product model definition linked with categories.
 """
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, Float, Boolean
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy.orm import relationship
 
 db = SQLAlchemy()
 
@@ -17,8 +18,16 @@ class Product(db.Model):
     name: str = Column(String(100), unique=True, nullable=False)
     price: float = Column(Float, nullable=False)
     description: str = Column(String(255), nullable=False)
-    is_deleted: bool = Column(Boolean, default=False)  # Field for soft deletion
+    category_id: int = Column(Integer, ForeignKey("categories.id"), nullable=False)
 
-    def delete_product(self) -> None:
-        """Mark the product as deleted."""
-        self.is_deleted = True
+    category: "Category" = relationship("Category", backref="products")
+
+    def to_dict(self) -> dict:
+        """Convert Product object to dictionary."""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "price": self.price,
+            "description": self.description,
+            "category": self.category.to_dict() if self.category else None,
+        }
