@@ -1,5 +1,5 @@
 """
-Repository layer for shopping cart data interactions, including item removal and total price update.
+Repository layer for shopping cart data interactions, including quantity modification and total price update.
 """
 
 from app.models.shopping_cart import ShoppingCart, CartItem, db
@@ -9,27 +9,26 @@ class ShoppingCartRepository:
     """Provides ShoppingCart model-related database functionality."""
 
     @staticmethod
-    def get_cart_by_user_id(user_id: int) -> ShoppingCart | None:
-        """Retrieve a shopping cart by user ID."""
-        return ShoppingCart.query.filter_by(user_id=user_id).first()
-
-    @staticmethod
     def get_cart_by_id(cart_id: int) -> ShoppingCart | None:
         """Retrieve a shopping cart by its ID."""
         return ShoppingCart.query.get(cart_id)
 
     @staticmethod
-    def remove_item_from_cart(cart_id: int, item_id: int) -> None:
-        """Remove an item from the shopping cart."""
+    def modify_item_quantity(cart_id: int, item_id: int, new_quantity: int) -> None:
+        """Modify the quantity of an item in the shopping cart."""
         cart = ShoppingCartRepository.get_cart_by_id(cart_id)
         if not cart:
             raise ValueError("Shopping cart not found")
-        
+
         item = CartItem.query.get(item_id)
         if not item:
             raise ValueError("Item not found in cart")
 
-        db.session.delete(item)
+        if new_quantity < 1:
+            raise ValueError("Quantity must be a positive integer")
+
+        item.quantity = new_quantity
+        db.session.commit()
         cart.update_total_price()
 
     @staticmethod
