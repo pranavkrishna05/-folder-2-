@@ -1,9 +1,9 @@
 """
-ShoppingCart model definition.
+ShoppingCart model definition with total price tracking functionality.
 """
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey, Float
 from sqlalchemy.orm import relationship
 
 db = SQLAlchemy()
@@ -16,13 +16,20 @@ class ShoppingCart(db.Model):
 
     id: int = Column(Integer, primary_key=True)
     user_id: int = Column(Integer, ForeignKey("users.id"), nullable=True)
+    total_price: float = Column(Float, default=0.0)
     cart_items = relationship("CartItem", backref="shopping_cart", cascade="all, delete-orphan")
+
+    def update_total_price(self) -> None:
+        """Update the total price of the shopping cart."""
+        self.total_price = sum(item.quantity * item.product.price for item in self.cart_items)
+        db.session.commit()
 
     def to_dict(self) -> dict:
         """Convert ShoppingCart object to dictionary."""
         return {
             "id": self.id,
             "user_id": self.user_id,
+            "total_price": self.total_price,
             "cart_items": [item.to_dict() for item in self.cart_items],
         }
 
@@ -37,10 +44,13 @@ class CartItem(db.Model):
     quantity: int = Column(Integer, nullable=False)
     shopping_cart_id: int = Column(Integer, ForeignKey("shopping_carts.id"), nullable=False)
 
+    product = relationship("Product")  # Linking Product model for price and description
+
     def to_dict(self) -> dict:
         """Convert CartItem object to dictionary."""
         return {
             "id": self.id,
             "product_id": self.product_id,
             "quantity": self.quantity,
+            "product": self.product.to_dict() if self.product else None,
         }
