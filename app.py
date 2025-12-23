@@ -4,7 +4,7 @@ Application entry point for the Flask application.
 
 from flask import Flask
 from app.config.app_config import DevelopmentConfig
-from app.routes.search_routes import search_routes
+from app.routes.product_routes import product_routes
 from app.models.product import db
 
 
@@ -16,8 +16,8 @@ def create_app() -> Flask:
     # Initialize SQLAlchemy
     db.init_app(app)
 
-    # Register search routes
-    app.register_blueprint(search_routes)
+    # Register product-related routes
+    app.register_blueprint(product_routes)
 
     return app
 
