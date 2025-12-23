@@ -4,8 +4,8 @@ Application entry point for the Flask application.
 
 from flask import Flask
 from app.config.app_config import DevelopmentConfig
-from app.routes.password_routes import password_routes
-from app.models.password_reset import db
+from app.routes.auth_routes import auth_blueprint
+from app.models.session import db
 from app.models.user import User
 
 
@@ -17,8 +17,8 @@ def create_app() -> Flask:
     # Initialize SQLAlchemy
     db.init_app(app)
 
-    # Register password-related routes
-    app.register_blueprint(password_routes)
+    # Register authentication routes
+    app.register_blueprint(auth_blueprint)
 
     return app
 
