@@ -1,5 +1,5 @@
 """
-ShoppingCart model definition with quantity adjustment and total price recalculation features.
+ShoppingCart model definition with persistent cart state.
 """
 
 from flask_sqlalchemy import SQLAlchemy
@@ -15,7 +15,7 @@ class ShoppingCart(db.Model):
     __tablename__ = "shopping_carts"
 
     id: int = Column(Integer, primary_key=True)
-    user_id: int = Column(Integer, ForeignKey("users.id"), nullable=True)
+    user_id: int = Column(Integer, ForeignKey("users.id"), nullable=True, unique=True)
     total_price: float = Column(Float, default=0.0)
     cart_items = relationship("CartItem", backref="shopping_cart", cascade="all, delete-orphan")
 
@@ -44,7 +44,7 @@ class CartItem(db.Model):
     quantity: int = Column(Integer, nullable=False)
     shopping_cart_id: int = Column(Integer, ForeignKey("shopping_carts.id"), nullable=False)
 
-    product = relationship("Product")  # Linking Product model for price and description
+    product = relationship("Product")  # Linking Product model for price and details
 
     def to_dict(self) -> dict:
         """Convert CartItem object to dictionary."""
