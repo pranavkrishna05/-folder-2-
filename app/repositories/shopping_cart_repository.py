@@ -4,7 +4,6 @@ Repository layer for shopping cart data interactions, enhancing persistence acro
 
 from app.models.shopping_cart import ShoppingCart, CartItem, db
 
-
 class ShoppingCartRepository:
     """Provides ShoppingCart model-related database functionality."""
 
