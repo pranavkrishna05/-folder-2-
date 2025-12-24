@@ -19,12 +19,12 @@ class ShoppingCart(db.Model):
     total_price: float = Column(Float, default=0.0)
     cart_items = relationship("CartItem", backref="shopping_cart", cascade="all, delete-orphan")
 
-    def update_total_price(self) -> None:
+    def update_total_price(self):
         """Update the total price of the shopping cart."""
         self.total_price = sum(item.quantity * item.product.price for item in self.cart_items)
         db.session.commit()
 
-    def to_dict(self) -> dict:
+    def to_dict(self):
         """Convert ShoppingCart object to dictionary."""
         return {
             "id": self.id,
@@ -46,7 +46,7 @@ class CartItem(db.Model):
 
     product = relationship("Product")  # Linking Product model for price and details
 
-    def to_dict(self) -> dict:
+    def to_dict(self):
         """Convert CartItem object to dictionary."""
         return {
             "id": self.id,
